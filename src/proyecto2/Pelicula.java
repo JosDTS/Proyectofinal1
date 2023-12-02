@@ -4,80 +4,81 @@
  */
 package proyecto2;
 
+import com.google.gson.JsonElement;
+import java.time.LocalDate;
 import java.util.List;
+import javax.swing.ImageIcon;
 
 public class Pelicula {
     private String titulo;
     private String originalTitle;
     private String overview;
     private String posterPath;
+    private LocalDate releaseDate;
 
-    public Pelicula(String titulo, String originalTitle, String overview, String posterPath) {
+    public Pelicula(String titulo, String originalTitle, String overview, String posterPath, LocalDate releaseDate) {
         this.titulo = titulo;
         this.originalTitle = originalTitle;
         this.overview = overview;
         this.posterPath = posterPath;
+        this.releaseDate = releaseDate;
+     
+    }
+ 
+   
+    
+
+    public Pelicula() {
     }
 
-    /**
-     * @return the titulo
-     */
+   
+
     public String getTitulo() {
         return titulo;
     }
 
-    /**
-     * @param titulo the titulo to set
-     */
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
 
-    /**
-     * @return the originalTitle
-     */
     public String getOriginalTitle() {
         return originalTitle;
     }
 
-    /**
-     * @param originalTitle the originalTitle to set
-     */
     public void setOriginalTitle(String originalTitle) {
         this.originalTitle = originalTitle;
     }
 
-    /**
-     * @return the overview
-     */
     public String getOverview() {
         return overview;
     }
 
-    /**
-     * @param overview the overview to set
-     */
     public void setOverview(String overview) {
         this.overview = overview;
     }
 
-    /**
-     * @return the posterPath
-     */
     public String getPosterPath() {
         return posterPath;
     }
 
-    /**
-     * @param posterPath the posterPath to set
-     */
     public void setPosterPath(String posterPath) {
         this.posterPath = posterPath;
     }
 
+
+    public LocalDate getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(LocalDate releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
     @Override
     public String toString() {
-        return "Pelicula{" + "titulo=" + titulo + ", originalTitle=" + originalTitle + ", overview=" + overview + ", posterPath=" + posterPath + '}';
+        return "Pelicula{" + "titulo=" + titulo + ", originalTitle=" + originalTitle + ", overview=" + overview + ", posterPath=" + posterPath + ", releaseDate=" + releaseDate + '}';
     }
-    
+
+   
+     
 }

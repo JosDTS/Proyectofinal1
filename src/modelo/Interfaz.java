@@ -4,21 +4,103 @@
  */
 package modelo;
 
-import java.awt.Color;
-import modelo.Pelicula;
+import proyecto2.Pelicula;
+import modelo.Movies;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.time.LocalDate;
 
 /**
  *
  * @author ESTUDIANTE
  */
 public class Interfaz extends javax.swing.JFrame {
-
+ private Movies movies;
+    
+ 
     /**
      * Creates new form Interfaz
      */
     public Interfaz() {
         initComponents();
+        movies = new Movies();
+        
     }
+private void mostrarPeliculasEnInterfaz(ArrayList<Pelicula> peliculas) {
+   
+    
+    StringBuilder peliculasTexto = new StringBuilder();
+    
+    for (Pelicula pelicula : peliculas) {
+        // Obtener el título original (si está disponible en la clase Pelicula)
+        String originalTitle = pelicula.getOriginalTitle(); // Asumiendo que existe este método
+        
+        // Obtener la ruta del póster (si está disponible en la clase Pelicula)
+        String posterPath = pelicula.getPosterPath(); // Asumiendo que existe este método
+        
+        // Construir el texto con la información de cada película
+        peliculasTexto.append("Título: ").append(pelicula.getTitulo()).append("\n");
+        
+        // Agregar el título original si está disponible
+        if (originalTitle != null && !originalTitle.isEmpty()) {
+            peliculasTexto.append("Título Original: ").append(originalTitle).append("\n");
+        }
+      
+            peliculasTexto.append("Ruta del Póster: ").append(posterPath).append("\n");
+        
+        peliculasTexto.append("Resumen: ").append(pelicula.getOverview()).append("\n");
+        int year = pelicula.getReleaseDate().getYear();
+      peliculasTexto.append("Año: ").append(year).append("\n");
+        peliculasTexto.append("\n");
+    }
+    
+    // Colocar el texto en el JTextArea
+    jTextArea1.setText(peliculasTexto.toString());
+    
+    // Colocar el JTextArea en el JScrollPane
+    jScrollPane1.setViewportView(jTextArea1);
+}
+
+private ArrayList<Pelicula> buscarPeliculas(String textoBusqueda, String tipoBusqueda) {
+    ArrayList<Pelicula> peliculas = movies.obtenerPeliculas();
+    ArrayList<Pelicula> peliculasEncontradas = new ArrayList<>();
+    
+    for (Pelicula pelicula : peliculas) {
+        String valorBuscado = "";
+        // Determinar qué campo de la película se usará para la búsqueda
+        switch (tipoBusqueda) {
+            case "Titulo":
+                valorBuscado = pelicula.getTitulo();
+                break;
+            case "Id":
+                
+                break;
+            case "Año":
+               int añoBuscado = Integer.parseInt(textoBusqueda); // Convertir el texto de búsqueda a entero
+    int añoPelicula = pelicula.getReleaseDate().getYear(); // Obtener el año de la película
+    
+    if (añoPelicula == añoBuscado) { // Comparar el año de la película con el año buscado
+        peliculasEncontradas.add(pelicula);
+    }
+               
+                break;
+            // Puedes agregar más casos según los campos disponibles en tu clase Pelicula
+        }
+        
+        // Realizar la comparación para ver si coincide con el texto de búsqueda
+        if (valorBuscado != null && valorBuscado.toLowerCase().contains(textoBusqueda.toLowerCase())) {
+            peliculasEncontradas.add(pelicula);
+        }
+    }
+    
+    return peliculasEncontradas;
+}
+// Método para cargar la imagen desde la ruta o URL proporcionada
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -39,6 +121,8 @@ public class Interfaz extends javax.swing.JFrame {
         cmbTiposdeBusqueda = new javax.swing.JComboBox<>();
         lblTipoBusqueda = new javax.swing.JLabel();
         lblTitulo = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -87,6 +171,11 @@ public class Interfaz extends javax.swing.JFrame {
         bntBuscar.setBackground(new java.awt.Color(204, 204, 204));
         bntBuscar.setFont(new java.awt.Font("Calisto MT", 0, 18)); // NOI18N
         bntBuscar.setText("Buscar");
+        bntBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bntBuscarActionPerformed(evt);
+            }
+        });
         jPanel1.add(bntBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 190, 110, 40));
         bntBuscar.getAccessibleContext().setAccessibleName("btnBuscar");
 
@@ -119,6 +208,12 @@ public class Interfaz extends javax.swing.JFrame {
         lblTitulo.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jPanel1.add(lblTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 90, 260, 70));
 
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 350, 520, 310));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -145,6 +240,16 @@ public class Interfaz extends javax.swing.JFrame {
     private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtBuscarActionPerformed
+
+    private void bntBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntBuscarActionPerformed
+        // TODO add your handling code here:
+       String textoBusqueda = txtBuscar.getText();
+    String tipoBusqueda = (String) cmbTiposdeBusqueda.getSelectedItem();
+
+    ArrayList<Pelicula> peliculasEncontradas = buscarPeliculas(textoBusqueda, tipoBusqueda);
+    
+    mostrarPeliculasEnInterfaz(peliculasEncontradas);
+    }//GEN-LAST:event_bntBuscarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -187,6 +292,8 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JLabel lblCollage;
     private javax.swing.JLabel lblImagenLogo;
     private javax.swing.JLabel lblTipoBusqueda;

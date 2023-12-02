@@ -1,38 +1,30 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package proyecto2;
+package modelo;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import proyecto2.Pelicula;
+import java.time.LocalDate;
 
-public class Proyecto2 extends JFrame {
-
-    ArrayList<Pelicula> peliculas = new ArrayList<>();
-
-    public Proyecto2() {
-        setTitle("Movies from TMDb");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        DefaultListModel<ImageIcon> movieListModel = new DefaultListModel<>();
-        JList<ImageIcon> movieList = new JList<>(movieListModel);
-        JScrollPane scrollPane = new JScrollPane(movieList);
-        add(scrollPane);
-
+public class Movies {
+    public ArrayList<Pelicula> obtenerPeliculas() {
+        ArrayList<Pelicula> peliculas = new ArrayList<>();
         try {
-            URL url = new URL("https://api.themoviedb.org/3/movie/popular?language=en-US&page=1&api_key=404afbb2bf7ad6cfb120c64e8016dccf");
+            URL url = new URL("https://api.themoviedb.org/3/movie/popular?api_key=05e231f450f8eb53ac911700a7ea6873");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
@@ -49,29 +41,22 @@ public class Proyecto2 extends JFrame {
 
             for (int i = 0; i < results.size(); i++) {
                 JsonObject movie = results.get(i).getAsJsonObject();
-
                 String title = movie.get("title").getAsString();
+                String originalTitle = movie.get("original_title").getAsString();
+                String overview = movie.get("overview").getAsString();
                 String posterPath = movie.get("poster_path").getAsString();
-
-                // Load image from URL
-                ImageIcon imageIcon = new ImageIcon(new URL("https://image.tmdb.org/t/p/w500" + posterPath));
-
-                // Create Pelicula objects if needed
-                Pelicula peli = new Pelicula(title, title, " ", posterPath);
+                String release_date = movie.get("release_date").getAsString();
+    
+                LocalDate releaseDate = LocalDate.parse(release_date);
+                Pelicula peli = new Pelicula(title, originalTitle, overview, posterPath, releaseDate);
                 peliculas.add(peli);
-
-                // Add image to the list model
-                movieListModel.addElement(imageIcon);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Proyecto2 frame = new Proyecto2();
-            frame.setVisible(true);
-        });
+        return peliculas;
     }
 }
+
+  
+
